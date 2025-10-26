@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Модуль 3 — Функционал ИС (теория + расширенные демо)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wrap{ max-width:1100px; margin-inline:auto; padding:20px }
+    .demo-frame{ width:100%; border:1px solid var(--line,#e5e7eb); border-radius:12px; background:#fff }
+    pre code{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace }
+    .table{ width:100%; border-collapse:collapse }
+    .table th,.table td{ border-bottom:1px solid var(--line,#e5e7eb); padding:6px 8px; text-align:left; vertical-align:top }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace }
+    .subtitle{ opacity:.85 }
+    nav a{ margin-right:10px }
+    .note{ background:var(--card,#fff); border:1px solid var(--line,#e5e7eb); border-radius:10px; padding:10px; margin:10px 0; }
+  </style>
+</head>
+<body>  <div class="wrap wrap-tight">
+    <h1>Методические рекомендации</h1>
+    <nav class="global-nav" aria-label="Глобальная навигация">
+      <a href="module1-db.html">Модуль 1 — База данных</a>
+           <a href="module2-uiux-iframe.html">Модуль 2 — UI/UX</a>
+      <a href="module3-functional-iframe-plus.html">Модуль 3 — Функционал</a>
+      <a href="assignment1-guidelines.html">Задание 1</a>
+      <a href="assignment2-guidelines.html">Задание 2</a>
+      <a href="assignment3-guidelines.html">Задание 3</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <header>
+      <h1>Модуль 3 — Разработка функционала информационной системы</h1>
+      <nav>
+        <a href="#integration">1. Интеграция фронтенда и бэкенда</a>
+        <a href="#rest">2. REST API</a>
+        <a href="#routing">3. Маршрутизация и БД</a>
+        <a href="#frameworks">4. Frameworks</a>
+        <a href="#perf">5. Оптимизация</a>
+        <a href="#seo">6. SEO</a>
+        <a href="#testing">7. Тестирование</a>
+        <a href="#devtools">8. DevTools</a>
+        <a href="#animations">9. Анимации</a>
+        <a href="#docs">10. Документация</a>
+        <a href="#extras">+ Доп. демо</a>
+      </nav>
+    </header>
+
+    <section id="integration">
+      <h2>1. Принципы интеграции фронтенда и бэкенда</h2>
+      <p><strong>Фронтенд</strong> — интерфейс в браузере (HTML, CSS, JS). <strong>Бэкенд</strong> — серверная часть, принимающая запросы, выполняющая логику и работающая с БД. Интеграция — через HTTP‑запросы, чаще всего REST API.</p>
+      <pre><code class="mono">[Пользователь]
+   ↓ (запрос)
+[Frontend: JS/HTML] → (HTTP POST/GET)
+   ↓
+[Backend: Flask API / PHP / Node]
+   ↓
+[База данных]
+   ↑ (ответ JSON)</code></pre>
+      <ol>
+        <li>Пользователь заполняет форму регистрации.</li>
+        <li>JavaScript отправляет <code>POST /api/register</code>.</li>
+        <li>Сервер проверяет данные, пишет в БД и возвращает JSON.</li>
+        <li>Фронтенд показывает сообщение об успехе.</li>
+      </ol>
+      <h3>Демо</h3>
+      <iframe class="demo-frame" title="Flow" loading="lazy" style="width:100%;height:420px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&#x27;ru&#x27;&gt;&lt;head&gt;&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width,initial-scale=1&#x27;&gt;
+&lt;style&gt;:root{--bg:#0f172a;--card:#fff;--line:#e5e7eb;--accent:#0ea5e9}body{margin:0;background:var(--bg);height:100%;display:grid;place-items:center;font-family:Inter,system-ui,Arial,sans-serif}.wrap{width:min(920px,96vw);background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}header{padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600}.grid{display:grid;grid-template-columns:1fr 1fr}.pane{padding:14px;border-right:1px solid var(--line)}.pane:last-child{border-right:none}label{display:block;margin:.5rem 0 .25rem}input{width:100%;padding:.6rem;border:1px solid #cbd5e1;border-radius:10px}button{margin-top:.5rem;padding:.6rem 1rem;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}pre{background:#0b1220;color:#e2e8f0;padding:10px;border-radius:10px;overflow:auto}.log{height:160px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px;background:#f8fafc;font-family:ui-monospace,monospace;font-size:.9rem}&lt;/style&gt;
+&lt;/head&gt;&lt;body&gt;&lt;div class=&#x27;wrap&#x27;&gt;&lt;header&gt;Сквозной поток: форма → fetch (POST) → «сервер» → JSON‑ответ&lt;/header&gt;&lt;div class=&#x27;grid&#x27;&gt;
+&lt;div class=&#x27;pane&#x27;&gt;&lt;form id=&#x27;reg&#x27;&gt;&lt;label for=&#x27;email&#x27;&gt;E‑mail&lt;/label&gt;&lt;input id=&#x27;email&#x27; type=&#x27;email&#x27; required&gt;&lt;label for=&#x27;pwd&#x27;&gt;Пароль&lt;/label&gt;&lt;input id=&#x27;pwd&#x27; type=&#x27;password&#x27; minlength=&#x27;8&#x27; required&gt;&lt;button&gt;Зарегистрироваться&lt;/button&gt;&lt;/form&gt;&lt;pre id=&#x27;req&#x27;&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#x27;pane&#x27;&gt;&lt;div class=&#x27;log&#x27; id=&#x27;log&#x27; aria-live=&#x27;polite&#x27;&gt;&lt;/div&gt;&lt;pre id=&#x27;res&#x27;&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;script&gt;const db=JSON.parse(localStorage.getItem(&#x27;m3_users&#x27;)||&#x27;[]&#x27;);const log=(m)=&gt;{const el=document.getElementById(&#x27;log&#x27;);el.innerHTML+=m+&quot;\n&quot;;el.scrollTop=el.scrollHeight};function mockPost(u,b){log(&quot;Backend: POST &quot;+u);const d=JSON.parse(b);db.push({id:db.length+1,email:d.email,createdAt:new Date().toISOString()});localStorage.setItem(&#x27;m3_users&#x27;,JSON.stringify(db));return {ok:true,message:&quot;Пользователь создан&quot;,id:db.length}}document.getElementById(&#x27;reg&#x27;).addEventListener(&#x27;submit&#x27;,(e)=&gt;{e.preventDefault();const email=document.getElementById(&#x27;email&#x27;).value;const password=document.getElementById(&#x27;pwd&#x27;).value;const payload=JSON.stringify({email,password});document.getElementById(&#x27;req&#x27;).textContent=&quot;fetch(&#x27;/api/register&#x27;, {\n  method: &#x27;POST&#x27;,\n  headers: {&#x27;Content-Type&#x27;:&#x27;application/json&#x27;},\n  body: &quot;+JSON.stringify(payload,null,2)+&quot;\n})&quot;;const res=mockPost(&#x27;/api/register&#x27;,payload);document.getElementById(&#x27;res&#x27;).textContent=JSON.stringify(res,null,2);log(&quot;DB: insert user email=&quot;+email);log(&quot;Frontend: показать уведомление об успехе&quot;)});&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="rest">
+      <h2>2. REST API: архитектурный стиль взаимодействия</h2>
+      <p><strong>REST</strong> — принципы, где каждая сущность — ресурс по URL.</p>
+      <table class="table" aria-label="HTTP-методы">
+        <thead><tr><th>Метод</th><th>Назначение</th><th>Пример</th></tr></thead>
+        <tbody>
+          <tr><td>GET</td><td>Получить данные</td><td><code>/api/users</code></td></tr>
+          <tr><td>POST</td><td>Создать запись</td><td><code>/api/users</code></td></tr>
+          <tr><td>PUT</td><td>Обновить запись</td><td><code>/api/users/1</code></td></tr>
+          <tr><td>DELETE</td><td>Удалить запись</td><td><code>/api/users/1</code></td></tr>
+        </tbody>
+      </table>
+      <pre><code class="language-python">from flask import Flask, request, jsonify
+app = Flask(__name__)
+
+users = []
+
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    data = request.json
+    users.append(data)
+    return jsonify({"message": "Пользователь создан"}), 201
+
+@app.route('/api/users', methods=['GET'])
+def list_users():
+    return jsonify(users)</code></pre>
+      <div class="note">Особенности: JSON‑обмен; клиент не хранит состояние; каждый URL соответствует ресурсу (<code>/api/orders/12</code>).</div>
+      <h3>Демо</h3>
+      <iframe class="demo-frame" title="REST client" loading="lazy" style="width:100%;height:460px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&#x27;ru&#x27;&gt;&lt;head&gt;&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width,initial-scale=1&#x27;&gt;
+&lt;style&gt;body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#fff}.toolbar{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #e5e7eb;position:sticky;top:0;background:#fff}select,input,button{padding:.5rem .6rem;border:1px solid #cbd5e1;border-radius:10px}button{background:#0ea5e9;color:#fff;border-color:#0ea5e9;cursor:pointer}.wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}pre{background:#0b1220;color:#e2e8f0;padding:10px;border-radius:10px;overflow:auto;min-height:160px}&lt;/style&gt;
+&lt;/head&gt;&lt;body&gt;&lt;div class=&#x27;toolbar&#x27;&gt;&lt;select id=&#x27;method&#x27;&gt;&lt;option&gt;GET&lt;/option&gt;&lt;option&gt;POST&lt;/option&gt;&lt;option&gt;PUT&lt;/option&gt;&lt;option&gt;DELETE&lt;/option&gt;&lt;/select&gt;&lt;input id=&#x27;url&#x27; value=&#x27;/api/users&#x27;&gt;&lt;button id=&#x27;send&#x27;&gt;Send&lt;/button&gt;&lt;/div&gt;
+&lt;div class=&#x27;wrap&#x27;&gt;&lt;div&gt;&lt;h4&gt;Request&lt;/h4&gt;&lt;pre id=&#x27;req&#x27;&gt;&lt;/pre&gt;&lt;textarea id=&#x27;body&#x27; style=&#x27;width:100%;height:120px;border:1px solid #e5e7eb;border-radius:10px;padding:8px&#x27;&gt;{&quot;id&quot;:1,&quot;email&quot;:&quot;user@example.com&quot;}&lt;/textarea&gt;&lt;/div&gt;&lt;div&gt;&lt;h4&gt;Response&lt;/h4&gt;&lt;pre id=&#x27;res&#x27;&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;script&gt;const db=JSON.parse(localStorage.getItem(&#x27;m3_users&#x27;)||&#x27;[]&#x27;);function save(){localStorage.setItem(&#x27;m3_users&#x27;,JSON.stringify(db))}function handle(method,url,body){if(url===&#x27;/api/users&#x27;&amp;&amp;method===&#x27;GET&#x27;){return db}if(url===&#x27;/api/users&#x27;&amp;&amp;method===&#x27;POST&#x27;){const o=JSON.parse(body);o.id=db.length+1;db.push(o);save();return {message:&#x27;created&#x27;,id:o.id}}const m=url.match(/^\/api\/users\/(\d+)$/);if(m){const id=+m[1];const idx=db.findIndex(u=&gt;u.id===id);if(method===&#x27;PUT&#x27;){if(idx&gt;=0){db[idx]=JSON.parse(body);db[idx].id=id;save();return {message:&#x27;updated&#x27;}}return {error:&#x27;not found&#x27;}}if(method===&#x27;DELETE&#x27;){if(idx&gt;=0){db.splice(idx,1);save();return {message:&#x27;deleted&#x27;}}return {error:&#x27;not found&#x27;}}if(method===&#x27;GET&#x27;){if(idx&gt;=0){return db[idx]}return {error:&#x27;not found&#x27;}}}return {error:&#x27;unknown route&#x27;}}document.getElementById(&#x27;send&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const method=document.getElementById(&#x27;method&#x27;).value;const url=document.getElementById(&#x27;url&#x27;).value;const body=document.getElementById(&#x27;body&#x27;).value;document.getElementById(&#x27;req&#x27;).textContent=method+&quot; &quot;+url+(method!==&#x27;GET&#x27;?&quot;\n\n&quot;+body:&quot;&quot;);const res=handle(method,url,body);document.getElementById(&#x27;res&#x27;).textContent=JSON.stringify(res,null,2)});&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="routing">
+      <h2>3. Маршрутизация и работа с БД</h2>
+      <h3>Маршруты Flask</h3>
+      <pre><code class="language-python">@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/orders/&lt;int:id&gt;')
+def get_order(id):
+    return f"Детали заказа №{id}"</code></pre>
+      <h3>ORM (SQLAlchemy)</h3>
+      <pre><code class="language-python">from flask_sqlalchemy import SQLAlchemy
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))</code></pre>
+      <div class="note">Преимущества ORM: таблицы как объекты, генерация SQL, защита от SQL‑инъекций.</div>
+    </section>
+
+    <section id="frameworks">
+      <h2>4. Основы frameworks / библиотек (Flask)</h2>
+      <ul class="kv">
+        <li>Простой каркас, поддержка маршрутов и шаблонов.</li>
+        <li>Совместимость с SQLite, PostgreSQL, MySQL.</li>
+        <li>Подходит для MVP и учебных проектов.</li>
+      </ul>
+      <pre><code class="language-python">from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Главная страница"
+
+if __name__ == '__main__':
+    app.run(debug=True)</code></pre>
+    </section>
+
+    <section id="perf">
+      <h2>5. Оптимизация производительности</h2>
+      <h3>5.1 Кэширование</h3>
+      <ul class="kv">
+        <li>HTTP: <code>Cache-Control</code>, <code>ETag</code>.</li>
+        <li>Кэш приложения (Flask‑cache / self‑made).</li>
+        <li>Внешние: Redis, Memcached.</li>
+      </ul>
+      <pre><code class="language-python">@app.route('/data')
+@cache.cached(timeout=60)
+def get_data():
+    return get_heavy_data()</code></pre>
+      <h3>5.2 Минификация</h3>
+      <p>CSS/JS минифицируем (Terser, UglifyJS, cssnano) → <code>.min.css</code>, <code>.min.js</code>.</p>
+      <h3>5.3 Lazy‑loading</h3>
+      <p>Загружать изображения по мере надобности:</p>
+      <pre><code class="language-html">&lt;img src="photo.jpg" loading="lazy" alt="Фото"&gt;</code></pre>
+      <h3>Демо</h3>
+      <iframe class="demo-frame" title="Lazy images" loading="lazy" style="width:100%;height:520px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&#x27;ru&#x27;&gt;&lt;head&gt;&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width,initial-scale=1&#x27;&gt;
+&lt;style&gt;body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#f8fafc}.hero{height:220px;display:grid;place-items:center;background:#0ea5e9;color:#fff;font-size:1.2rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:12px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden}.card img{width:100%;height:160px;object-fit:cover;display:block}.card .body{padding:10px}&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;&lt;div class=&#x27;hero&#x27;&gt;Прокрутите вниз — изображения грузятся отложенно (loading=&quot;lazy&quot;)&lt;/div&gt;&lt;div class=&#x27;grid&#x27;&gt;&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 1&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366b1%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 1&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 1&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 2&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366b8%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 2&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 2&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 3&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366bf%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 3&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 3&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 4&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366c6%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 4&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 4&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 5&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366cd%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 5&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 5&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 6&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366d4%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 6&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 6&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 7&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366db%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 7&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 7&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 8&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366e2%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 8&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 8&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 9&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366e9%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 9&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 9&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 10&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366f0%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 10&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 10&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 11&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366f7%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 11&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 11&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&#x27;card&#x27;&gt;&lt;img loading=&#x27;lazy&#x27; alt=&#x27;Demo 12&#x27; src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22160%22&gt;&lt;rect width=%22240%22 height=%22160%22 fill=%22%233366fe%22/&gt;&lt;text x=%2210%22 y=%2288%22 fill=%22white%22 font-size=%2220%22&gt;IMG 12&lt;/text&gt;&lt;/svg&gt;&#x27;&gt;&lt;div class=&#x27;body&#x27;&gt;Картинка 12&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="seo">
+      <h2>6. SEO‑базис</h2>
+      <ul class="kv">
+        <li>Метаданные: <code>&lt;title&gt;</code>, <code>&lt;meta name="description"&gt;</code>.</li>
+        <li>Один <code>h1</code> на страницу; далее <code>h2</code>/<code>h3</code>.</li>
+        <li>ЧПУ‑URL: <code>/catalog/phones</code> вместо <code>/page?id=12</code>.</li>
+        <li><code>alt</code> у изображений; скорость загрузки.</li>
+      </ul>
+      <pre><code class="language-html">&lt;title&gt;Каталог товаров&lt;/title&gt;
+&lt;meta name="description" content="Интернет-магазин с доставкой."&gt;</code></pre>
+    </section>
+
+    <section id="testing">
+      <h2>7. Тестирование и валидация кода</h2>
+      <table class="table" aria-label="Инструменты проверки">
+        <thead><tr><th>Инструмент</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td>W3C Validator</td><td>Проверка HTML</td></tr>
+          <tr><td>CSS Validator</td><td>Проверка CSS</td></tr>
+          <tr><td>Lighthouse</td><td>Производительность, SEO и доступность</td></tr>
+          <tr><td>HTMLHint / ESLint</td><td>Статический анализ кода</td></tr>
+        </tbody>
+      </table>
+      <pre><code class="mono">https://validator.w3.org/nu/#file-upload</code></pre>
+    </section>
+
+    <section id="devtools">
+      <h2>8. Отладка и DevTools</h2>
+      <ul class="kv">
+        <li><strong>Elements</strong> — правка HTML/CSS «на лету».</li>
+        <li><strong>Console</strong> — ошибки/логи JS.</li>
+        <li><strong>Network</strong> — время запросов и кэширование.</li>
+        <li><strong>Responsive</strong> — проверка адаптивности.</li>
+        <li><strong>Lighthouse</strong> — аудит производительности/SEO/A11y.</li>
+      </ul>
+      <div class="note">Во вкладке Network видны заголовки кэша, размеры ответов, время TTFB.</div>
+    </section>
+
+    <section id="animations">
+      <h2>9. Анимации и микроанимации</h2>
+      <pre><code class="language-css">button:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  animation: fadeIn 0.5s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce){
+  .modal { animation: none; }
+}</code></pre>
+      <h3>Демо</h3>
+      <iframe class="demo-frame" title="Animations" loading="lazy" style="width:100%;height:260px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&#x27;ru&#x27;&gt;&lt;head&gt;&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width,initial-scale=1&#x27;&gt;
+&lt;style&gt;:root{--line:#e5e7eb}body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;display:grid;place-items:center;height:100%;background:#fff}.row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}.btn{padding:.7rem 1.2rem;border:1px solid #2563eb;border-radius:12px;background:#2563eb;color:#fff;cursor:pointer;transition:transform .25s ease}.btn:hover{transform:translateY(-2px) scale(1.03)}.chip{padding:.5rem .9rem;border:1px solid var(--line);border-radius:9999px;transition:box-shadow .3s}.chip:hover{box-shadow:0 6px 20px rgba(2,6,23,.12)}@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}.card{border:1px solid var(--line);border-radius:12px;padding:14px;width:min(320px,90vw);animation:fadeIn .6s ease}@media (prefers-reduced-motion: reduce){.btn,.chip{transition:none}.card{animation:none}}&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;&lt;div class=&#x27;row&#x27;&gt;&lt;button class=&#x27;btn&#x27;&gt;Hover Me&lt;/button&gt;&lt;div class=&#x27;chip&#x27;&gt;Микроанимация chip&lt;/div&gt;&lt;div class=&#x27;card&#x27;&gt;Карточка с анимацией появления (respect prefers-reduced-motion)&lt;/div&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="docs">
+      <h2>10. Документирование и репозиторий проекта</h2>
+      <h3>README.md</h3>
+      <pre><code class="language-md"># IS "Theatre Booking"
+## Установка
+1. `pip install -r requirements.txt`
+2. `flask run`
+
+## API
+- `POST /api/register` — регистрация пользователя
+- `GET /api/tickets` — список билетов</code></pre>
+      <h3>Git‑лог и коммиты</h3>
+      <pre><code class="language-git">feat(api): добавлена авторизация через JWT
+fix(ui): исправлен отступ в форме входа
+docs: обновлён README</code></pre>
+      <h3>Структура репозитория</h3>
+      <pre><code class="mono">/frontend
+/backend
+/sql
+/docs
+README.md</code></pre>
+    </section>
+
+    <section id="extras">
+      <h2>Дополнительные интерактивные демо</h2>
+      <p>Эти примеры вынесены в отдельные страницы в папке <code>examples/</code>, чтобы их можно было запускать и в новых вкладках.</p>
+      <h3>Пагинация</h3>
+      <iframe class="demo-frame" src="examples/pagination.html" title="Pagination demo" loading="lazy" style="height:420px"></iframe>
+      <h3>Серверная валидация</h3>
+      <iframe class="demo-frame" src="examples/server-validation.html" title="Server validation demo" loading="lazy" style="height:420px"></iframe>
+      <h3>Optimistic UI</h3>
+      <iframe class="demo-frame" src="examples/optimistic-ui.html" title="Optimistic UI demo" loading="lazy" style="height:300px"></iframe>
+      <h3>Очередь задач</h3>
+      <iframe class="demo-frame" src="examples/queue.html" title="Queue demo" loading="lazy" style="height:360px"></iframe>
+    </section>
+
+    
+  </div>
+</body>
+</html>

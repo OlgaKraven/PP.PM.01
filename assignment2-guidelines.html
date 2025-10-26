@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Методичка — Модуль 2 (Дизайн и UX веб‑приложения)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wrap{max-width:1100px;margin-inline:auto;padding:20px}
+    nav a{margin-right:10px}
+    .subtitle{opacity:.85}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--line,#e5e7eb);padding:6px 8px;text-align:left;vertical-align:top}
+    pre code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+    .checklist li{margin:.2rem 0}
+    .note{background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);border-radius:10px;padding:10px;margin:10px 0}
+    .grid-two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .kbd{padding:2px 6px;border:1px solid var(--line,#e5e7eb);border-radius:6px;background:#f8fafc}
+  </style>
+</head>
+<body>  <div class="wrap wrap-tight">
+    <h1>Методические рекомендации</h1>
+    <nav class="global-nav" aria-label="Глобальная навигация">
+      <a href="module1-db.html">Модуль 1 — База данных</a>
+           <a href="module2-uiux-iframe.html">Модуль 2 — UI/UX</a>
+      <a href="module3-functional-iframe-plus.html">Модуль 3 — Функционал</a>
+      <a href="assignment1-guidelines.html">Задание 1</a>
+      <a href="assignment2-guidelines.html">Задание 2</a>
+      <a href="assignment3-guidelines.html">Задание 3</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <header>
+        <h1>Задание 2 — Поэтапные шаги по работе с модулем 2</h1>
+
+       <div class="subtitle"><b>Цель:</b> адаптивный дизайн под <code>390×844</code> px, оптимизация графики, внедрение слайдера и повышение удобства интерфейса.</div>
+      <nav>
+        <a href="#s1">Этап 1. Анализ интерфейса</a>
+        <a href="#s2">Этап 2. Структура проекта</a>
+        <a href="#s3">Этап 3. Адаптив (390×844)</a>
+        <a href="#s4">Этап 4. Визуальный дизайн</a>
+        <a href="#s5">Этап 5. Валидация UI</a>
+        <a href="#s6">Этап 6. Слайдер</a>
+        <a href="#s7">Этап 7. Оптимизация изображений</a>
+        <a href="#s8">Этап 8. Доступность и UX</a>
+        <a href="#s9">Этап 9. UI‑гайд</a>
+        <a href="#s10">Этап 10. Документация и коммиты</a>
+      </nav>
+    </header>
+
+    <section id="s1">
+      <h2>Этап 1. Анализ интерфейса и постановка задач</h2>
+      <p><b>Задача:</b> определить, какие страницы и элементы нужно оформить/улучшить.</p>
+      <ul class="kv checklist">
+        <li>Просмотрите макеты/файлы Модуля 1 — страницы: регистрация, авторизация, пользовательская (заявки), админ‑панель.</li>
+        <li>Выберите ключевые страницы для адаптации (минимум 3): <code>index.html</code> (вход), <code>register.html</code> (регистрация), <code>dashboard.html</code> (кабинет).</li>
+        <li>Определите улучшения: шрифты/цвета, поля форм и кнопки, адаптивное меню (бургер), контрасты и иконки.</li>
+      </ul>
+      <div class="note"><b>Результат:</b> список страниц и перечень улучшений дизайна/UX.</div>
+    </section>
+
+    <section id="s2">
+      <h2>Этап 2. Настройка структуры проекта</h2>
+      <p>Создайте отдельную папку <code>/module2</code> или ветку <code>m2-design</code>.</p>
+      <pre><code class="mono">/m2
+  index.html
+  register.html
+  dashboard.html
+  /css
+    style.css
+  /img
+    slider1.webp slider2.webp ...</code></pre>
+      <div class="grid-two">
+        <pre><code class="language-html">&lt;link rel="stylesheet" href="css/style.css"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+        <div class="note">Все страницы подключают единый <code>style.css</code> и meta viewport.</div>
+      </div>
+    </section>
+
+    <section id="s3">
+      <h2>Этап 3. Проектирование адаптива под смартфон (390×844 px)</h2>
+      <h3>3.1 Базовая сетка</h3>
+      <pre><code class="language-css">.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 390px;
+  margin: 0 auto;
+}</code></pre>
+
+      <h3>3.2 Медиа‑запросы</h3>
+      <pre><code class="language-css">@media (max-width: 844px) {
+  body { font-size: 16px; }
+  .menu { flex-direction: column; }
+}</code></pre>
+
+      <h3>3.3 Проверка в браузере</h3>
+      <ul class="kv">
+        <li>DevTools → Toggle Device Toolbar.</li>
+        <li>Устройство: <b>iPhone 12 Pro</b> (<code>390×844</code>).</li>
+        <li>Проверить все страницы и навигацию.</li>
+      </ul>
+      <div class="note"><b>Результат:</b> корректное отображение каждой страницы на смартфоне.</div>
+    </section>
+
+    <section id="s4">
+      <h2> Этап 4. Улучшение визуального дизайна</h2>
+      <div class="grid-two">
+        <div>
+          <h3>Цветовая схема (пример: 3 тона)</h3>
+          <ul class="kv">
+            <li>Фон: <code>#FFFFFF</code></li>
+            <li>Основной: <code>#0057B7</code></li>
+            <li>Акцент: <code>#FFD700</code></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Типографика</h3>
+          <pre><code class="language-css">body {
+  font-family: 'Open Sans', sans-serif;
+  color: #333;
+  line-height: 1.5;
+}</code></pre>
+        </div>
+      </div>
+
+      <h3>Иконки</h3>
+      <p>Можно использовать Font Awesome или встроить SVG‑иконки локально.</p>
+      <pre><code class="language-html">&lt;i class="fa fa-user"&gt;&lt;/i&gt; Войти
+&lt;!-- или локальный SVG --&gt;
+&lt;svg width="16" height="16" aria-hidden="true"&gt;...&lt;/svg&gt; Войти</code></pre>
+
+      <h3>Фокус‑состояния</h3>
+      <pre><code class="language-css">input:focus, button:focus {
+  outline: 2px solid #0057B7;
+}</code></pre>
+
+      <h3>Уведомления (toast)</h3>
+      <pre><code class="language-js">alert("Регистрация прошла успешно!");</code></pre>
+    </section>
+
+    <section id="s5">
+      <h2> Этап 5. Валидация UI (ошибки форм)</h2>
+      <div class="grid-two">
+        <pre><code class="language-js">if (login.value === "") {
+  login.classList.add("error");
+  error.textContent = "Введите логин";
+}</code></pre>
+        <pre><code class="language-css">input.error {
+  border: 2px solid red;
+}</code></pre>
+      </div>
+      <ul class="kv checklist">
+        <li>Проверяйте уникальность логина (API/массив).</li>
+        <li>Показывайте сообщения рядом с полями.</li>
+        <li>Не убирайте фокус у пользователя; сообщайте контекст ошибки.</li>
+      </ul>
+      <div class="note"><b>Результат:</b> пустые/неверные поля подсвечиваются, ошибки отображаются.</div>
+    </section>
+
+    <section id="s6">
+      <h2>Этап 6. Реализация слайдера</h2>
+      <h3>6.1 HTML</h3>
+      <pre><code class="language-html">&lt;div class="slider"&gt;
+  &lt;div class="slides"&gt;
+    &lt;img src="img/slider1.webp" alt=""&gt;
+    &lt;img src="img/slider2.webp" alt=""&gt;
+    &lt;img src="img/slider3.webp" alt=""&gt;
+    &lt;img src="img/slider4.webp" alt=""&gt;
+  &lt;/div&gt;
+  &lt;button class="prev"&gt;‹&lt;/button&gt;
+  &lt;button class="next"&gt;›&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+      <h3>6.2 CSS</h3>
+      <pre><code class="language-css">.slider { position: relative; width: 100%; overflow: hidden; }
+.slides { display: flex; transition: transform 0.5s ease; }
+.slides img { width: 100%; }</code></pre>
+
+      <h3>6.3 JS</h3>
+      <pre><code class="language-js">let index = 0;
+const slides = document.querySelectorAll('.slides img');
+
+function showSlide(i) {
+  index = (i + slides.length) % slides.length;
+  document.querySelector('.slides').style.transform = `translateX(${-index * 100}%)`;
+}
+
+document.querySelector('.next').onclick = () => showSlide(index + 1);
+document.querySelector('.prev').onclick = () => showSlide(index - 1);
+
+setInterval(() => showSlide(index + 1), 3000);</code></pre>
+
+      <div class="note"><b>Результат:</b> 4 слайда, автопрокрутка 3 сек, работают стрелки.</div>
+    </section>
+
+    <section id="s7">
+      <h2>Этап 7. Оптимизация изображений</h2>
+      <ul class="kv">
+        <li>Ширина изображений ≤ 1200 px; по возможности WebP/SVG.</li>
+        <li>Безопасная компрессия через TinyPNG/Squoosh.</li>
+      </ul>
+      <h3>Таблица сравнения «до/после»</h3>
+      <table class="table" aria-label="Сравнение оптимизации">
+        <thead><tr><th>Файл</th><th>До (КБ)</th><th>После (КБ)</th><th>Экономия %</th></tr></thead>
+        <tbody>
+          <tr><td>slider1.jpg</td><td>500</td><td>150</td><td>70 %</td></tr>
+          <tr><td>logo.png</td><td>120</td><td>45</td><td>63 %</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Сохраните таблицу/скриншоты в <code>/docs/optimization.png</code>.</div>
+    </section>
+
+    <section id="s8">
+      <h2>Этап 8. Проверка доступности и UX</h2>
+      <ul class="kv checklist">
+        <li>Проверьте контраст (WebAIM Contrast Checker).</li>
+        <li>Добавьте <code>alt</code> для всех изображений.</li>
+        <li>Навигация с клавиатуры (клавиша <span class="kbd">Tab</span>).</li>
+        <li>DevTools → Lighthouse → Accessibility для мобильного UX.</li>
+      </ul>
+      <div class="note"><b>Результат:</b> базовое соответствие WCAG (контраст, alt, навигация).</div>
+    </section>
+
+    <section id="s9">
+      <h2> Этап 9. UI‑гайд</h2>
+      <p>Создайте <code>/docs/ui-guide.md</code> и зафиксируйте параметры:</p>
+      <table class="table" aria-label="UI-гайд">
+        <thead><tr><th>Элемент</th><th>Параметры</th></tr></thead>
+        <tbody>
+          <tr><td>Шрифты</td><td>Open Sans 16 px, h1 – 32 px</td></tr>
+          <tr><td>Цвета</td><td>Основной #0057B7, Акцент #FFD700</td></tr>
+          <tr><td>Сетка</td><td>12‑колоночная, ширина контейнера 390 px</td></tr>
+          <tr><td>Кнопки</td><td>Радиус 8 px, hover — темнее на 10 %</td></tr>
+          <tr><td>Слайдер</td><td>4 слайда, авто 3 с</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="s10">
+      <h2> Этап 10. Документирование и коммиты</h2>
+      <h3>Команды Git</h3>
+      <pre><code class="language-bash">git add .
+git commit -m "start module 2"</code></pre>
+      <pre><code class="language-bash">git commit -am "final design, responsive UI, slider"
+git push origin main</code></pre>
+
+      <h3>README.md — что указать</h3>
+      <ul class="kv checklist">
+        <li>Какие страницы адаптированы.</li>
+        <li>Результаты оптимизации изображений.</li>
+        <li>Пример интерфейса (скриншот).</li>
+        <li>Ссылка на демо.</li>
+      </ul>
+    </section>
+
+  </div>
+</body>
+</html>

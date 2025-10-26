@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Модуль 1 — Проектирование базы данных (теория + примеры)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Небольшие утилиты, не изменяющие ваш основной стиль */
+    .example{border:1px solid var(--line, #e5e7eb); border-radius:10px; padding:14px; margin:14px 0; background:var(--card,#fff)}
+    .example h4{margin:0 0 .4rem 0}
+    .badge{display:inline-block; font-size:.75rem; padding:2px 8px; border:1px solid var(--line,#e5e7eb); border-radius:9999px; margin-left:.5rem}
+    .grid.two{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+    .small{font-size:.9rem}
+    .table{width:100%; border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--line,#e5e7eb); padding:6px 8px; text-align:left; vertical-align:top}
+    .muted{opacity:.8}
+    details summary{cursor:pointer; font-weight:600; margin:8px 0}
+  </style>
+</head>
+<body>
+  
+  <div class="wrap wrap-tight">
+    <h1>Методические рекомендации</h1>
+    <nav class="global-nav" aria-label="Глобальная навигация">
+      <a href="module1-db.html">Модуль 1 — База данных</a>
+           <a href="module2-uiux-iframe.html">Модуль 2 — UI/UX</a>
+      <a href="module3-functional-iframe-plus.html">Модуль 3 — Функционал</a>
+      <a href="assignment1-guidelines.html">Задание 1</a>
+      <a href="assignment2-guidelines.html">Задание 2</a>
+      <a href="assignment3-guidelines.html">Задание 3</a>
+    </nav>
+  </div>
+
+
+  <div class="wrap">
+    <header>
+      <h1>Модуль 1 — Проектирование базы данных</h1>
+      <div class="subtitle">Теоретический конспект + практические примеры: ИС, жизненный цикл, моделирование данных, ER-диаграммы, нормализация, SQL-основы, архитектура веб-приложений, HTML/CSS/JS, backend, Git</div>
+      <nav>
+        <a href="#is">1. Понятие ИС и структура</a>
+        <a href="#sdlc">2. Жизненный цикл ИС</a>
+        <a href="#data-modeling">3. Моделирование данных</a>
+        <a href="#er">4. ER-диаграммы</a>
+        <a href="#normalization">5. Нормализация БД</a>
+        <a href="#sql">6. SQL-основы</a>
+        <a href="#web-arch">7. Архитектура веб-приложения</a>
+        <a href="#web-langs">8. Языки веб-разработки</a>
+        <a href="#git">9. Git</a>
+      </nav>
+    </header>
+
+    <section id="is">
+      <h2>1. Понятие информационной системы и её структура</h2>
+      <p><strong>Информационная система (ИС)</strong> — это совокупность программных, технических и организационных средств, предназначенных для сбора,
+      хранения, обработки и представления информации пользователю. Главная цель ИС — автоматизация процессов управления, обслуживания или взаимодействия пользователей.</p>
+
+      <h3>Основные компоненты ИС</h3>
+      <ul class="kv">
+        <li><strong>Фронтенд (Frontend)</strong> — пользовательская часть, с которой работает человек: веб-интерфейс или мобильное приложение. <em>Пример:</em> HTML-форма регистрации, кнопки, таблицы, страницы каталога.</li>
+        <li><strong>Бэкенд (Backend)</strong> — серверная логика, обрабатывающая запросы, взаимодействующая с БД, выполняющая проверки, расчёты и выдающая результаты. <em>Пример:</em> Python-скрипт, принимающий данные формы и добавляющий их в БД.</li>
+        <li><strong>База данных (БД)</strong> — систематизированное хранилище данных, обеспечивающее быстрый поиск, фильтрацию и связь информации. <em>Пример:</em> таблицы <code>users</code>, <code>orders</code>, <code>payments</code> в MySQL.</li>
+      </ul>
+
+      <h3>Взаимодействие компонентов</h3>
+      <pre><code class="mono">Пользователь (браузер)
+    ↓ запрос
+[Frontend: HTML/CSS/JS]
+    ↓
+[Backend: Python/PHP/Node]
+    ↓
+[Database: MySQL/PostgreSQL]
+    ↑ ответ
+</code></pre>
+
+      <div class="example">
+        <h4>Пример сквозного потока регистрации<span class="badge">frontend → backend → DB</span></h4>
+        <div class="grid two">
+          <div>
+            <div class="small muted">Форма (HTML)</div>
+            <pre><code class="language-html">&lt;form action="/api/register" method="post"&gt;
+  &lt;label&gt;E-mail&lt;input type="email" name="email" required&gt;&lt;/label&gt;
+  &lt;label&gt;Пароль&lt;input type="password" name="password" minlength="8" required&gt;&lt;/label&gt;
+  &lt;button type="submit"&gt;Зарегистрироваться&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+          </div>
+          <div>
+            <div class="small muted">Маршрут (Node.js / Express)</div>
+            <pre><code class="language-js">import express from "express";
+import bcrypt from "bcrypt";
+import pg from "pg";
+const app = express(); app.use(express.urlencoded({extended:true}));
+const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+app.post("/api/register", async (req,res) =&gt; {
+  const { email, password } = req.body;
+  const hash = await bcrypt.hash(password, 12);
+  await db.query(
+    "INSERT INTO users(email, password_hash) VALUES($1,$2)",
+    [email, hash]
+  );
+  res.status(201).json({ ok:true });
+});</code></pre>
+          </div>
+        </div>
+        <details>
+          <summary>DDL для таблицы <code>users</code></summary>
+          <pre><code class="language-sql">CREATE TABLE users(
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now()
+);</code></pre>
+        </details>
+      </div>
+    </section>
+
+    <section id="sdlc">
+      <h2>2. Жизненный цикл информационной системы</h2>
+      <p><strong>Жизненный цикл ИС</strong> — это последовательность этапов от идеи до эксплуатации и модернизации.</p>
+      <table class="table small" aria-label="Этапы жизненного цикла с примерами">
+        <thead>
+          <tr><th>Этап</th><th>Содержание</th><th>Пример</th><th>Артефакты</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1. Анализ требований</td><td>Интервью, сценарии, определение MVP</td><td>Театр: роли, правила возврата билетов</td><td>Бриф, User Stories, C4 Context</td></tr>
+          <tr><td>2. Проектирование</td><td>Архитектура, схемы БД, прототипы</td><td>ER-диаграмма, макеты посадки зала</td><td>ТЗ, ER, C4 C2/C3, прототип Figma</td></tr>
+          <tr><td>3. Разработка</td><td>Фронтенд, бэкенд, миграции БД</td><td>Flask API, SQLAlchemy модели</td><td>Репозиторий, CI-конфиг, миграции</td></tr>
+          <tr><td>4. Тестирование</td><td>Юнит/интеграционные, нагрузка</td><td>Проверка брони и оплат</td><td>Тест-план, отчёты, баг-репорты</td></tr>
+          <tr><td>5. Внедрение</td><td>Сборка, деплой, переменные окружения</td><td>Docker + Nginx + Postgres</td><td>Release notes, runbook, мониторинг</td></tr>
+          <tr><td>6. Эксплуатация</td><td>Обновления, бэкапы, SLA</td><td>Архив билетов, поддержка</td><td>Чек-листы, планы бэкапа, SLO</td></tr>
+        </tbody>
+      </table>
+      <div class="example">
+        <h4>Мини-RACI на этап «Проектирование»</h4>
+        <table class="table small">
+          <thead><tr><th>Задача</th><th>R</th><th>A</th><th>C</th><th>I</th></tr></thead>
+          <tbody>
+            <tr><td>ER-диаграмма</td><td>Системный аналитик</td><td>Архитектор</td><td>Backend-лид</td><td>Product Owner</td></tr>
+            <tr><td>Прототип UI</td><td>UX-дизайнер</td><td>Product Owner</td><td>Аналитик</td><td>Команда</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="data-modeling">
+      <h2>3. Моделирование данных</h2>
+      <p><strong>Моделирование данных</strong> — процесс описания структуры информации, необходимой системе.</p>
+      <div class="grid two">
+        <section>
+          <h3>Основные понятия</h3>
+          <ul class="kv">
+            <li><strong>Сущность (Entity):</strong> объект предметной области, о котором нужно хранить данные. <em>Примеры:</em> Пользователь, Заказ, Товар.</li>
+            <li><strong>Атрибут (Attribute):</strong> характеристика сущности. <em>Пример:</em> у «Пользователя» — ФИО, email, телефон.</li>
+            <li><strong>Связь (Relationship):</strong> логическая зависимость между сущностями. <em>Пример:</em> один пользователь имеет много заказов (1:N).</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Пример описания данных</h3>
+          <table class="table" aria-label="Пример атрибутов сущностей">
+            <thead>
+              <tr>
+                <th>Сущность</th><th>Атрибут</th><th>Тип данных</th><th>Примечание</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Пользователь</td><td>id</td><td>INT</td><td>Первичный ключ</td></tr>
+              <tr><td>Пользователь</td><td>email</td><td>VARCHAR(100)</td><td>Уникальный</td></tr>
+              <tr><td>Заказ</td><td>id</td><td>INT</td><td>Первичный ключ</td></tr>
+              <tr><td>Заказ</td><td>user_id</td><td>INT</td><td>Внешний ключ к пользователю</td></tr>
+              <tr><td>Заказ</td><td>дата</td><td>DATE</td><td>Дата оформления</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <div class="example">
+        <h4>JSON-модель для обмена через API</h4>
+        <pre><code class="language-json">{
+  "orderId": 10245,
+  "user": { "id": 7, "fullName": "Иван Иванов", "email": "ivan@example.com" },
+  "items": [
+    { "sku": "TCK-001", "title": "Билет, ряд 5 место 12", "qty": 1, "price": 1200.00 }
+  ],
+  "status": "reserved",
+  "reservedUntil": "2025-10-24T18:00:00Z"
+}</code></pre>
+      </div>
+    </section>
+
+    <section id="er">
+      <h2>4. ER-диаграммы (Entity-Relationship Diagram)</h2>
+      <p><strong>ER-диаграмма</strong> — графическое представление сущностей и связей между ними. Она помогает визуально понять структуру БД до её реализации.</p>
+
+      <h3>Основные нотации</h3>
+      <h4>1) Нотация Чена (Chen)</h4>
+      <p>Использует прямоугольники для сущностей, ромбы для связей и овалы для атрибутов.</p>
+      <pre><code class="mono">[Пользователь]──(оформляет)──[Заказ]</code></pre>
+
+      <h4>2) Crow’s Foot («вороний коготь»)</h4>
+      <p>Наиболее популярна в СУБД. Показывает кардинальности: «1» — одна запись, «∞» — много.</p>
+      <pre><code class="mono">Пользователь ───&lt; Заказ
+(1)            (∞)
+</code></pre>
+      <p>Это означает: один пользователь может иметь много заказов.</p>
+
+      <h4>3) IDEF1X</h4>
+      <p>Более формальная нотация, применяемая в корпоративных проектах. Связи показываются линиями с символами <code>PK</code>, <code>FK</code>.</p>
+      <pre><code class="mono">USER   (PK user_id)
+ORDER  (PK order_id, FK user_id)
+</code></pre>
+
+      <div class="example">
+        <h4>PlantUML (текстовый шаблон ER) — не удаляет схемы выше</h4>
+        <details open>
+          <summary>Шаблон для генерации диаграммы</summary>
+          <pre><code class="mono">@startuml
+entity "User" as USER {
+  * user_id : int &lt;&lt;PK&gt;&gt;
+  --
+  email : varchar
+  full_name : varchar
+}
+entity "Order" as ORDER {
+  * order_id : int &lt;&lt;PK&gt;&gt;
+  user_id : int &lt;&lt;FK&gt;&gt;
+  created_at : datetime
+}
+USER ||--o{ ORDER : places
+@enduml</code></pre>
+        </details>
+      </div>
+    </section>
+
+    <section id="normalization">
+      <h2>5. Принципы нормализации баз данных</h2>
+      <p><strong>Нормализация</strong> — процесс упорядочивания структуры таблиц для устранения избыточности и противоречий. Каждая «нормальная форма» (НФ) вводит свои правила.</p>
+      <table class="table" aria-label="Нормальные формы">
+        <thead>
+          <tr>
+            <th>Нормальная форма</th><th>Суть</th><th>Пример исправления</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>1НФ</strong></td><td>Нет повторяющихся групп; атомарность полей</td><td>Вместо «телефоны» → таблица <code>user_phones</code></td></tr>
+          <tr><td><strong>2НФ</strong></td><td>Неключевые атрибуты зависят от всего составного PK</td><td>Разделить таблицу «order_items(product_name, price, order_id, product_id)»</td></tr>
+          <tr><td><strong>3НФ</strong></td><td>Нет транзитивных зависимостей</td><td>Выделить <code>statuses(id, name)</code> и ссылаться по FK</td></tr>
+        </tbody>
+      </table>
+
+      <div class="example">
+        <h4>До/после: адрес в заказе</h4>
+        <div class="grid two small">
+          <div>
+            <div class="muted">Денормализовано</div>
+            <table class="table">
+              <tr><th>order_id</th><th>city</th><th>street</th><th>zip</th></tr>
+              <tr><td>101</td><td>Москва</td><td>Тверская, 1</td><td>125009</td></tr>
+              <tr><td>102</td><td>Москва</td><td>Тверская, 1</td><td>125009</td></tr>
+            </table>
+          </div>
+          <div>
+            <div class="muted">Нормализовано</div>
+            <table class="table">
+              <tr><th>address_id(PK)</th><th>city</th><th>street</th><th>zip</th></tr>
+              <tr><td>1</td><td>Москва</td><td>Тверская, 1</td><td>125009</td></tr>
+            </table>
+            <table class="table" style="margin-top:8px">
+              <tr><th>order_id(PK)</th><th>address_id(FK)</th></tr>
+              <tr><td>101</td><td>1</td></tr>
+              <tr><td>102</td><td>1</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sql">
+      <h2>6. SQL-основы</h2>
+      <p><strong>SQL (Structured Query Language)</strong> — язык структурированных запросов к базе данных.</p>
+
+      <h3>1) DDL — создание структуры БД</h3>
+      <pre><code class="language-sql">CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE,
+  password_hash TEXT NOT NULL
+);</code></pre>
+
+      <h3>2) DML — работа с данными</h3>
+      <pre><code class="language-sql">INSERT INTO users (full_name, email, password_hash)
+VALUES ('Иван Иванов', 'ivan@example.com', 'hash123');
+
+SELECT * FROM users WHERE email = 'ivan@example.com';
+
+UPDATE users SET full_name = 'Иван И.' WHERE id = 1;
+
+DELETE FROM users WHERE id = 1;</code></pre>
+
+      <div class="example">
+        <h4>Примеры запросов: JOIN, индексы, ограничения</h4>
+        <pre><code class="language-sql">-- Таблицы заказов и платежей
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  status_id INT NOT NULL REFERENCES statuses(id)
+);
+
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  order_id INT NOT NULL REFERENCES orders(id),
+  amount NUMERIC(10,2) NOT NULL CHECK (amount &gt;= 0),
+  paid_at TIMESTAMP
+);
+
+-- Индекс по email для быстрого поиска
+CREATE INDEX idx_users_email ON users(email);
+
+-- Выборка заказов с суммами
+SELECT u.full_name, o.id AS order_id, COALESCE(SUM(p.amount),0) AS total_paid
+FROM users u
+JOIN orders o ON o.user_id = u.id
+LEFT JOIN payments p ON p.order_id = o.id
+GROUP BY u.full_name, o.id
+ORDER BY o.id;
+
+-- Транзакция на оплату
+BEGIN;
+  INSERT INTO payments(order_id, amount, paid_at)
+  VALUES (42, 1200.00, now());
+  UPDATE orders SET status_id = 2 WHERE id = 42; -- 2 = 'paid'
+COMMIT;</code></pre>
+      </div>
+    </section>
+
+    <section id="web-arch">
+      <h2>7. Архитектура веб-приложения: клиент ↔ сервер ↔ база данных</h2>
+      <p>Современные веб-приложения используют трёхуровневую архитектуру.</p>
+      <ul class="kv">
+        <li><strong>Клиент (Frontend):</strong> HTML, CSS, JS. Отображает интерфейс и отправляет запросы на сервер (обычно через HTTP/HTTPS).</li>
+        <li><strong>Сервер (Backend):</strong> обрабатывает запросы, выполняет бизнес-логику, обращается к БД. <em>Примеры:</em> Flask (Python), Express (Node.js), Laravel (PHP).</li>
+        <li><strong>База данных (Database):</strong> хранит информацию. <em>Примеры:</em> MySQL, PostgreSQL, SQLite.</li>
+      </ul>
+
+      <h3>Пример взаимодействия (сырой HTTP)</h3>
+      <pre><code class="mono">POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{"email":"ivan@example.com","password":"secret"}
+
+HTTP/1.1 200 OK
+Set-Cookie: session=abc123; HttpOnly; Secure
+{"ok":true,"userId":7}</code></pre>
+
+      <div class="example">
+        <h4>REST-эндпоинты для мини‑MVP</h4>
+        <table class="table small">
+          <thead><tr><th>Метод</th><th>Путь</th><th>Описание</th></tr></thead>
+          <tbody>
+            <tr><td>POST</td><td>/api/register</td><td>Создание пользователя</td></tr>
+            <tr><td>POST</td><td>/api/login</td><td>Аутентификация, выдача токена</td></tr>
+            <tr><td>GET</td><td>/api/orders</td><td>Список заказов текущего пользователя</td></tr>
+            <tr><td>POST</td><td>/api/orders</td><td>Создать заказ</td></tr>
+            <tr><td>POST</td><td>/api/orders/{id}/pay</td><td>Оплата заказа</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="web-langs">
+      <h2>8. Основы языков веб-разработки</h2>
+
+      <h3>8.1. HTML (HyperText Markup Language)</h3>
+      <p>Создаёт структуру веб-страницы.</p>
+      <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Регистрация&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Создание аккаунта&lt;/h1&gt;
+  &lt;form action="/register" method="post"&gt;
+    &lt;label&gt;Логин: &lt;input type="text" name="login"&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;label&gt;Email: &lt;input type="email" name="email"&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;label&gt;Пароль: &lt;input type="password" name="password"&gt;&lt;/label&gt;&lt;br&gt;
+    &lt;button type="submit"&gt;Зарегистрироваться&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <div class="example">
+        <h4>Доступность: метки и подсказки</h4>
+        <pre><code class="language-html">&lt;label for="email"&gt;E-mail&lt;/label&gt;
+&lt;input id="email" type="email" aria-describedby="help-email" required&gt;
+&lt;small id="help-email"&gt;Мы не передаём адрес третьим лицам&lt;/small&gt;</code></pre>
+      </div>
+
+      <h3>8.2. CSS (Cascading Style Sheets)</h3>
+      <p>Отвечает за внешний вид элементов.</p>
+      <pre><code class="language-css">body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 40px;
+}
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}</code></pre>
+
+      <div class="example">
+        <h4>Пример сетки (CSS Grid)</h4>
+        <pre><code class="language-css">.cards{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}</code></pre>
+      </div>
+
+      <h3>8.3. JavaScript (JS)</h3>
+      <p>Добавляет интерактивность и динамику.</p>
+      <pre><code class="language-js">document.querySelector("form").addEventListener("submit", (e) =&gt; {
+  alert("Форма отправлена!");
+});</code></pre>
+
+      <div class="example">
+        <h4>Валидация пароля на клиенте (JS)</h4>
+        <pre><code class="language-js">const pwd = document.querySelector('input[name="password"]');
+pwd.addEventListener('input', () =&gt; {
+  const ok = pwd.value.length &gt;= 8;
+  pwd.setCustomValidity(ok ? '' : 'Минимум 8 символов');
+});</code></pre>
+      </div>
+
+      <h3>8.4. Backend-языки</h3>
+      <div class="grid two">
+        <section>
+          <h4>Python (Flask / Django)</h4>
+          <p>Прост и читаем, подходит для учебных ИС.</p>
+          <pre><code class="language-python">from flask import Flask, request, jsonify
+app = Flask(__name__)
+
+@app.post("/register")
+def register():
+    login = request.form["login"]
+    return jsonify(ok=True, message=f"Пользователь {login} зарегистрирован!")</code></pre>
+        </section>
+        <section>
+          <h4>PHP / Node.js</h4>
+          <pre><code class="language-php">&lt;?php
+// PHP (Slim/Laravel идея)
+$email = $_POST['email'] ?? '';
+$pwd = password_hash($_POST['password'] ?? '', PASSWORD_BCRYPT);
+$stmt = $pdo-&gt;prepare("INSERT INTO users(email,password_hash) VALUES(?,?)");
+$stmt-&gt;execute([$email, $pwd]);</code></pre>
+          <pre><code class="language-js">// Node.js (Express)
+app.get('/api/orders', auth, async (req,res) =&gt; {
+  const rows = await db.query('SELECT * FROM orders WHERE user_id=$1',[req.user.id]);
+  res.json(rows.rows);
+});</code></pre>
+        </section>
+      </div>
+    </section>
+
+    <section id="git">
+      <h2>9. Использование систем контроля версий (Git)</h2>
+      <p><strong>Git</strong> — система, позволяющая хранить историю изменений в проекте и работать в команде.</p>
+      <h3>Базовые команды</h3>
+      <pre><code class="language-bash">git init                # создать репозиторий
+git add .               # добавить файлы
+git commit -m "init"    # зафиксировать изменения
+git push origin main    # отправить на сервер (GitHub)</code></pre>
+
+      <h3>Структура репозитория</h3>
+      <pre><code class="mono">/project
+  /frontend
+  /backend
+  /sql
+  README.md</code></pre>
+
+      <div class="example">
+        <h4>Стратегия ветвления и .gitignore</h4>
+        <pre><code class="language-bash"># Ветки
+git checkout -b feature/registration-form
+# Работаем, коммитим...
+git push -u origin feature/registration-form
+# Создаём Pull Request и проходим ревью</code></pre>
+        <pre><code class="language-git"># .gitignore (фрагмент)
+node_modules/
+.env
+*.sqlite
+__pycache__/</code></pre>
+      </div>
+
+      <div class="note">
+        <strong>Зачем нужен Git:</strong>
+        <ul class="kv">
+          <li>сохраняет каждую версию проекта;</li>
+          <li>позволяет откатить изменения;</li>
+          <li>помогает вести индивидуальные задания и защищать их;</li>
+          <li>обеспечивает прозрачность командной работы.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="small muted">
+      Подключён стиль <code>styles.css</code>. Расположите файл стилей рядом с этим документом для корректного отображения.
+      Схемы в виде ASCII/код-блоков сохранены без изменений.
+    </footer>
+  </div>
+</body>
+</html>

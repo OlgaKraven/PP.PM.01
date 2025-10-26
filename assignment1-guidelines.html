@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Задание 1 — Методические рекомендации (MVP ИС)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wrap{max-width:1100px;margin-inline:auto;padding:20px}
+    nav a{margin-right:10px}
+    .subtitle{opacity:.85}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border-bottom:1px solid var(--line,#e5e7eb);padding:6px 8px;text-align:left;vertical-align:top}
+    pre code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+    .checklist li{margin:.2rem 0}
+    .note{background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);border-radius:10px;padding:10px;margin:10px 0}
+  </style>
+</head>
+<body>  <div class="wrap wrap-tight">
+    <h1>Методические рекомендации</h1>
+    <nav class="global-nav" aria-label="Глобальная навигация">
+      <a href="module1-db.html">Модуль 1 — База данных</a>
+           <a href="module2-uiux-iframe.html">Модуль 2 — UI/UX</a>
+      <a href="module3-functional-iframe-plus.html">Модуль 3 — Функционал</a>
+      <a href="assignment1-guidelines.html">Задание 1</a>
+      <a href="assignment2-guidelines.html">Задание 2</a>
+      <a href="assignment3-guidelines.html">Задание 3</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <header>
+      <h1>Задание 1 — Поэтапные шаги по работе с модулем 1</h1>
+       <div class="subtitle"><b>Цель:</b> создать MVP-версию ИС с БД, базовым интерфейсом и потоком «регистрация → авторизация → работа с сущностями».</div>
+      <nav>
+        <a href="#stage1">Этап 1. Анализ предметной области</a>
+        <a href="#stage2">Этап 2. Проектирование БД</a>
+        <a href="#stage3">Этап 3. Регистрация и авторизация</a>
+        <a href="#stage4">Этап 4. Рабочая страница</a>
+        <a href="#stage5">Этап 5. Админ-панель</a>
+        <a href="#stage6">Этап 6. Проверка и отладка</a>
+        <a href="#stage7">Этап 7. Структура проекта</a>
+        <a href="#stage8">Этап 8. Git и README</a>
+      </nav>
+    </header>
+
+    <section id="stage1">
+      <h2>Этап 1. Анализ предметной области</h2>
+      <p><b>Задача:</b> определить объекты системы и связи между ними.</p>
+      <ul class="kv checklist">
+        <li>Выберите предметную область (театр, библиотека, магазин, сервис бронирования и т. п.).</li>
+        <li>Выпишите ключевые <b>сущности</b> (то, с чем работает пользователь). Пример: Пользователь, Заказ, Услуга, Оплата, Статус.</li>
+        <li>Определите <b>связи</b> между сущностями (пример: один пользователь → несколько заказов (1:N); заказ → один статус (N:1)).</li>
+      </ul>
+
+      <h3>Таблица сущностей (пример)</h3>
+      <table class="table" aria-label="Список сущностей и связей">
+        <thead><tr><th>Сущность</th><th>Основные поля</th><th>Ключ</th><th>Связи</th></tr></thead>
+        <tbody>
+          <tr><td>User</td><td>id, login, password_hash, full_name, phone, email, role</td><td>PK = id</td><td>1 → N Request</td></tr>
+          <tr><td>Request</td><td>id, user_id, status_id, date, variant, payment</td><td>PK = id, FK = user_id</td><td>N → 1 Status</td></tr>
+          <tr><td>Status</td><td>id, name</td><td>PK = id</td><td>1 → N Request</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="stage2">
+      <h2>Этап 2. Проектирование базы данных</h2>
+      <p><b>Цель:</b> подготовить схему БД и ER-диаграмму.</p>
+      <ul class="kv">
+        <li>Назначьте типы данных: <code>id — INTEGER/SERIAL</code>, <code>login — VARCHAR(50)</code>, <code>email — VARCHAR(100)</code>, <code>created_at — TIMESTAMP DEFAULT CURRENT_TIMESTAMP</code>.</li>
+        <li>Постройте ER-диаграмму (draw.io, dbdiagram.io, Workbench): сущности, связи (1:N, N:1), ключи (PK, FK).</li>
+      </ul>
+
+      <h3>SQL-скрипт создания схемы (<code>sql/schema.sql</code>)</h3>
+      <pre><code class="language-sql">CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  login VARCHAR(50) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  full_name VARCHAR(100) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  role VARCHAR(10) DEFAULT 'user'
+);
+
+CREATE TABLE status (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE requests (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  status_id INT REFERENCES status(id),
+  variant VARCHAR(50),
+  payment VARCHAR(20),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+
+      <ul class="kv checklist">
+        <li>Выполните скрипт в вашей СУБД (PostgreSQL/MySQL/SQLite).</li>
+        <li>Подготовьте <code>sql/seed.sql</code> с тестовыми данными.</li>
+      </ul>
+    </section>
+
+    <section id="stage3">
+      <h2>Этап 3. Разработка интерфейса регистрации и авторизации</h2>
+      <h3>3.1 Регистрация пользователя</h3>
+      <p><b>Цель:</b> форма регистрации, сохраняющая данные в БД.</p>
+      <pre><code class="language-html">&lt;form action="/register" method="post"&gt;
+  &lt;input type="text" name="login" placeholder="Логин" required&gt;
+  &lt;input type="password" name="password" placeholder="Пароль" required&gt;
+  &lt;input type="text" name="full_name" placeholder="ФИО" required&gt;
+  &lt;input type="text" name="phone" placeholder="Телефон" required&gt;
+  &lt;input type="email" name="email" placeholder="Email" required&gt;
+  &lt;button type="submit"&gt;Зарегистрироваться&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+      <div class="note"><b>Валидация:</b> обязательность полей, уникальность логина, корректность email/телефона, пароль ≥ 8 символов.</div>
+
+      <h4>Обработчик (Flask, упрощённо)</h4>
+      <pre><code class="language-python">@app.route('/register', methods=['POST'])
+def register():
+    data = request.form
+    # Проверки данных
+    # Хеширование пароля
+    # Добавление записи в БД
+    return "Регистрация успешна"</code></pre>
+
+      <h3>3.2 Авторизация пользователя</h3>
+      <ul class="kv">
+        <li>Создайте форму входа (<code>templates/login.html</code>), проверьте логин/пароль по БД.</li>
+        <li>При успехе создайте сессию и перенаправьте на <code>/dashboard</code>.</li>
+        <li>Обработайте ошибки — неверные данные, пустые поля.</li>
+      </ul>
+    </section>
+
+    <section id="stage4">
+      <h2>Этап 4. Реализация пользовательского интерфейса (рабочая страница)</h2>
+      <p><b>Цель:</b> после входа пользователь видит свои заявки и может создавать новые.</p>
+      <h3>Список заявок (<code>templates/dashboard.html</code>)</h3>
+      <pre><code class="language-html">&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Дата&lt;/th&gt;&lt;th&gt;Вариант&lt;/th&gt;&lt;th&gt;Оплата&lt;/th&gt;&lt;th&gt;Статус&lt;/th&gt;&lt;/tr&gt;
+  {% for r in requests %}
+  &lt;tr&gt;&lt;td&gt;{{r.date}}&lt;/td&gt;&lt;td&gt;{{r.variant}}&lt;/td&gt;&lt;td&gt;{{r.payment}}&lt;/td&gt;&lt;td&gt;{{r.status}}&lt;/td&gt;&lt;/tr&gt;
+  {% endfor %}
+&lt;/table&gt;</code></pre>
+
+      <h3>Создание новой заявки</h3>
+      <pre><code class="language-html">&lt;form action="/new-request" method="post"&gt;
+  &lt;input type="date" name="date" required&gt;
+  &lt;input type="text" name="variant" placeholder="Тип услуги" required&gt;
+  &lt;select name="payment"&gt;
+    &lt;option&gt;Наличные&lt;/option&gt;&lt;option&gt;Карта&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;button type="submit"&gt;Создать заявку&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+      <div class="note">Сервер: проверить поля; добавить запись в <code>requests</code> со статусом <code>NEW</code>; затем редирект обратно на список.</div>
+    </section>
+
+    <section id="stage5">
+      <h2>Этап 5. Панель администратора</h2>
+      <p><b>Цель:</b> управлять всеми заявками и их статусами.</p>
+      <ul class="kv">
+        <li>Отдельный маршрут <code>/admin</code> (доступ только для роли <code>admin</code>).</li>
+        <li>Таблица всех заявок: клиент, дата, вариант, статус.</li>
+      </ul>
+
+      <h3>Изменение статуса (пример формы)</h3>
+      <pre><code class="language-html">&lt;form action="/admin/update-status" method="post"&gt;
+  &lt;input type="hidden" name="id" value="{{r.id}}"&gt;
+  &lt;select name="status_id"&gt;
+    &lt;option value="1"&gt;Новая&lt;/option&gt;
+    &lt;option value="2"&gt;В работе&lt;/option&gt;
+    &lt;option value="3"&gt;Завершена&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;button&gt;Изменить&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+      <div class="note">Сервер: <code>UPDATE requests SET status_id = ... WHERE id = ...</code></div>
+    </section>
+
+    <section id="stage6">
+      <h2>Этап 6. Проверка и отладка</h2>
+      <ul class="kv checklist">
+        <li>Проверьте поток: регистрация → вход → создание заявки → выход.</li>
+        <li>Проверьте вход как админ → изменение статусов.</li>
+        <li>Убедитесь, что данные корректно сохраняются в БД.</li>
+        <li>Проверьте адаптивность (DevTools → Responsive).</li>
+        <li>Пройдите валидацию HTML/CSS: W3C Validator, Lighthouse.</li>
+      </ul>
+    </section>
+
+    <section id="stage7">
+      <h2>Этап 7. Финальная структура проекта</h2>
+      <pre><code class="mono">/project
+  /backend
+    app.py
+    templates/
+    static/
+  /sql
+    schema.sql
+    seed.sql
+  /docs
+    ERD.png
+    README.md</code></pre>
+    </section>
+
+    <section id="stage8">
+      <h2>Этап 8. Документирование и публикация в Git</h2>
+      <h3>Инициализация репозитория</h3>
+      <pre><code class="language-bash">git init
+git add .
+git commit -m "start module 1"</code></pre>
+
+      <h3>Финальный коммит</h3>
+      <pre><code class="language-bash">git commit -am "final version of module 1"</code></pre>
+
+      <h3>README.md — что включить</h3>
+      <ul class="kv checklist">
+        <li>Краткое описание системы и сценарий использования (регистрация, заявки, админ).</li>
+        <li>Структура таблиц и ER-диаграмма.</li>
+        <li>Инструкция по запуску (зависимости, миграции, команды).</li>
+      </ul>
+    </section>
+
+
+  </div>
+</body>
+</html>

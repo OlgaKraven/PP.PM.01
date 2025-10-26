@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Модуль 2 — UI/UX • Демо в iframe</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .demo-frame{ width:100%; border:1px solid var(--line,#e5e7eb); border-radius:12px; background:#fff }
+    .wrap{ max-width:1100px; margin-inline:auto; padding:20px }
+    nav a{ margin-right:10px }
+    .subtitle{ opacity:.85 }
+    .example-note{ font-size:.9rem; opacity:.8; margin:.5rem 0 0 }
+  </style>
+</head>
+<body>  <div class="wrap wrap-tight">
+    <h1>Методические рекомендации</h1>
+    <nav class="global-nav" aria-label="Глобальная навигация">
+      <a href="module1-db.html">Модуль 1 — База данных</a>
+           <a href="module2-uiux-iframe.html">Модуль 2 — UI/UX</a>
+      <a href="module3-functional-iframe-plus.html">Модуль 3 — Функционал</a>
+      <a href="assignment1-guidelines.html">Задание 1</a>
+      <a href="assignment2-guidelines.html">Задание 2</a>
+      <a href="assignment3-guidelines.html">Задание 3</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <header>
+      <h1>Модуль 2 — Разработка дизайна ИС (UI/UX)</h1>
+      <div class="subtitle">Теория + встраиваемые интерактивные примеры</div>
+      <nav>
+        <a href="#login">Форма авторизации</a>
+        <a href="#grid">Сетка Grid/Flex</a>
+        <a href="#modal">Модальное окно</a>
+        <a href="#slider">Слайдер</a>
+        <a href="#a11y">A11y</a>
+      </nav>
+    </header>
+
+    <section id="login">
+      <h2>Форма авторизации (UI + UX)</h2>
+      <p>Меткованные поля, подсказки, валидация на клиенте, видимые ошибки, доступность с клавиатуры.</p>
+      <iframe class="demo-frame" title="demo" loading="lazy" style="width:100%;height:480px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&#x27;ru&#x27;&gt;
+&lt;head&gt;
+&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width, initial-scale=1&#x27;&gt;
+&lt;style&gt;
+  :root{--bg:#0f172a;--card:#ffffff;--line:#e5e7eb;--accent:#2563eb}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);display:grid;place-items:center;height:100%}
+  .auth{width:min(420px,94vw);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px;box-shadow:0 10px 30px rgba(2,6,23,.2)}
+  h1{margin:.2rem 0 1rem 0;font-size:1.25rem}
+  label{display:block;margin:.5rem 0 .25rem}
+  input{width:100%;padding:.7rem;border:1px solid #cbd5e1;border-radius:10px}
+  input:focus{outline:2px solid var(--accent)}
+  .row{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem}
+  .btn{padding:.6rem 1rem;border-radius:9999px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .err{color:#b91c1c;font-size:.9rem;margin:.5rem 0;display:none}
+  .hint{font-size:.85rem;color:#64748b}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;form class=&#x27;auth&#x27; id=&#x27;form&#x27;&gt;
+    &lt;h1&gt;Вход в систему&lt;/h1&gt;
+    &lt;label for=&#x27;email&#x27;&gt;E‑mail&lt;/label&gt;
+    &lt;input id=&#x27;email&#x27; type=&#x27;email&#x27; required aria-describedby=&#x27;e-hint&#x27;&gt;
+    &lt;small id=&#x27;e-hint&#x27; class=&#x27;hint&#x27;&gt;Используйте учебную почту&lt;/small&gt;
+    &lt;label for=&#x27;pwd&#x27;&gt;Пароль&lt;/label&gt;
+    &lt;input id=&#x27;pwd&#x27; type=&#x27;password&#x27; minlength=&#x27;8&#x27; required&gt;
+    &lt;div class=&#x27;err&#x27; id=&#x27;err&#x27;&gt;Неверный логин или пароль&lt;/div&gt;
+    &lt;div class=&#x27;row&#x27;&gt;
+      &lt;a href=&#x27;#&#x27; class=&#x27;hint&#x27;&gt;Забыли пароль?&lt;/a&gt;
+      &lt;button class=&#x27;btn&#x27; id=&#x27;submit&#x27;&gt;Войти&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;script&gt;
+  const form = document.getElementById(&#x27;form&#x27;);
+  const err = document.getElementById(&#x27;err&#x27;);
+  form.addEventListener(&#x27;submit&#x27;, (e)=&gt;{
+    e.preventDefault();
+    const ok = document.getElementById(&#x27;pwd&#x27;).value.length &gt;= 8 &amp;&amp; document.getElementById(&#x27;email&#x27;).value.includes(&#x27;@&#x27;);
+    if(!ok){ err.style.display=&#x27;block&#x27;; return; }
+    err.style.display=&#x27;none&#x27;;
+    document.getElementById(&#x27;submit&#x27;).textContent=&#x27;Готово ✓&#x27;;
+  });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+      <p class="example-note">Подсказка: попробуйте отправить пустую форму и ввести короткий пароль, затем исправьте ошибку.</p>
+    </section>
+
+    <section id="grid">
+      <h2>Адаптивная сетка (Grid + media queries)</h2>
+      <p>Регулируйте ширину «макета» ползунком, чтобы увидеть перестройку колонок.</p>
+      <iframe class="demo-frame" title="demo" loading="lazy" style="width:100%;height:420px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&#x27;ru&#x27;&gt;
+&lt;head&gt;
+&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width, initial-scale=1&#x27;&gt;
+&lt;style&gt;
+  :root{--line:#e5e7eb;--card:#fff;--bg:#f8fafc}
+  body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif}
+  .toolbar{display:flex;gap:10px;align-items:center;padding:10px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0}
+  .wrap{padding:14px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:80px;display:grid;place-items:center;font-weight:600}
+  @media (max-width: 720px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width: 480px){ .grid{grid-template-columns:1fr;} }
+  input[type=range]{width:200px}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&#x27;toolbar&#x27;&gt;
+    &lt;label&gt;Ширина макета: &lt;span id=&#x27;w&#x27;&gt;100%&lt;/span&gt;&lt;/label&gt;
+    &lt;input id=&#x27;r&#x27; type=&#x27;range&#x27; min=&#x27;320&#x27; max=&#x27;1200&#x27; value=&#x27;1000&#x27;&gt;
+  &lt;/div&gt;
+  &lt;div class=&#x27;wrap&#x27;&gt;
+    &lt;div id=&#x27;frame&#x27; class=&#x27;grid&#x27; style=&#x27;width:1000px;margin-inline:auto&#x27;&gt;
+      &lt;div class=&#x27;card&#x27;&gt;1&lt;/div&gt;&lt;div class=&#x27;card&#x27;&gt;2&lt;/div&gt;&lt;div class=&#x27;card&#x27;&gt;3&lt;/div&gt;
+      &lt;div class=&#x27;card&#x27;&gt;4&lt;/div&gt;&lt;div class=&#x27;card&#x27;&gt;5&lt;/div&gt;&lt;div class=&#x27;card&#x27;&gt;6&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;script&gt;
+  const r = document.getElementById(&#x27;r&#x27;); const w = document.getElementById(&#x27;w&#x27;); const frame=document.getElementById(&#x27;frame&#x27;);
+  const update = ()=&gt;{ frame.style.width = r.value+&#x27;px&#x27;; w.textContent = r.value+&#x27;px&#x27;; };
+  r.addEventListener(&#x27;input&#x27;, update); update();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="modal">
+      <h2>Модальное окно (доступное)</h2>
+      <p>Откройте модалку, закройте клавишей <kbd>Esc</kbd> или кликом по затемнению. Фокус возвращается на кнопку.</p>
+      <iframe class="demo-frame" title="demo" loading="lazy" style="width:100%;height:360px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&#x27;ru&#x27;&gt;
+&lt;head&gt;
+&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width, initial-scale=1&#x27;&gt;
+&lt;style&gt;
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;display:grid;place-items:center;height:100vh;background:#f8fafc}
+  .btn{padding:.6rem 1rem;border-radius:10px;border:1px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer}
+  #modal{position:fixed;inset:0;background:rgba(2,6,23,.6);display:none;align-items:center;justify-content:center}
+  .sheet{background:#fff;border-radius:14px;padding:18px;min-width:280px;box-shadow:0 10px 30px rgba(2,6,23,.35)}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button class=&#x27;btn&#x27; id=&#x27;open&#x27;&gt;Открыть модалку&lt;/button&gt;
+  &lt;div id=&#x27;modal&#x27; role=&#x27;dialog&#x27; aria-modal=&#x27;true&#x27; aria-labelledby=&#x27;m-title&#x27;&gt;
+    &lt;div class=&#x27;sheet&#x27; tabindex=&#x27;-1&#x27;&gt;
+      &lt;h2 id=&#x27;m-title&#x27;&gt;Привет!&lt;/h2&gt;
+      &lt;p&gt;Это доступное модальное окно.&lt;/p&gt;
+      &lt;button class=&#x27;btn&#x27; id=&#x27;close&#x27;&gt;Закрыть&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;script&gt;
+  const modal=document.getElementById(&#x27;modal&#x27;); const openBtn=document.getElementById(&#x27;open&#x27;); const closeBtn=document.getElementById(&#x27;close&#x27;); const sheet=modal.querySelector(&#x27;.sheet&#x27;); let last;
+  openBtn.addEventListener(&#x27;click&#x27;,()=&gt;{ last=document.activeElement; modal.style.display=&#x27;flex&#x27;; sheet.focus(); });
+  closeBtn.addEventListener(&#x27;click&#x27;,()=&gt;{ modal.style.display=&#x27;none&#x27;; last?.focus(); });
+  modal.addEventListener(&#x27;click&#x27;,(e)=&gt;{ if(e.target===modal) closeBtn.click(); });
+  document.addEventListener(&#x27;keydown&#x27;,(e)=&gt;{ if(e.key===&#x27;Escape&#x27;) closeBtn.click(); });
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="slider">
+      <h2>Простой слайдер</h2>
+      <p>Автопрокрутка с ручным управлением стрелками.</p>
+      <iframe class="demo-frame" title="demo" loading="lazy" style="width:100%;height:380px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&#x27;ru&#x27;&gt;
+&lt;head&gt;
+&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width, initial-scale=1&#x27;&gt;
+&lt;style&gt;
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#0f172a;display:grid;place-items:center;height:100%}
+  .slider{width:min(680px,94vw);position:relative}
+  .slide{display:none;aspect-ratio:16/9;border-radius:16px;overflow:hidden;color:#fff;font-size:2rem;font-weight:700;display:grid;place-items:center}
+  .slide.active{display:grid}
+  .a{background:linear-gradient(135deg,#2563eb,#60a5fa)}
+  .b{background:linear-gradient(135deg,#16a34a,#86efac)}
+  .c{background:linear-gradient(135deg,#a21caf,#f0abfc)}
+  .controls{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 8px}
+  .btn{background:rgba(0,0,0,.35);color:#fff;border:none;border-radius:10px;padding:.4rem .6rem;cursor:pointer}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&#x27;slider&#x27;&gt;
+    &lt;div class=&#x27;slide a active&#x27;&gt;Слайд 1&lt;/div&gt;
+    &lt;div class=&#x27;slide b&#x27;&gt;Слайд 2&lt;/div&gt;
+    &lt;div class=&#x27;slide c&#x27;&gt;Слайд 3&lt;/div&gt;
+    &lt;div class=&#x27;controls&#x27;&gt;
+      &lt;button class=&#x27;btn&#x27; id=&#x27;prev&#x27; aria-label=&#x27;Предыдущий&#x27;&gt;&amp;larr;&lt;/button&gt;
+      &lt;button class=&#x27;btn&#x27; id=&#x27;next&#x27; aria-label=&#x27;Следующий&#x27;&gt;&amp;rarr;&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;script&gt;
+  let i=0; const slides=[...document.querySelectorAll(&#x27;.slide&#x27;)];
+  function show(n){ slides[i].classList.remove(&#x27;active&#x27;); i=(n+slides.length)%slides.length; slides[i].classList.add(&#x27;active&#x27;); }
+  document.getElementById(&#x27;next&#x27;).onclick=()=&gt;show(i+1);
+  document.getElementById(&#x27;prev&#x27;).onclick=()=&gt;show(i-1);
+  setInterval(()=&gt;show(i+1), 3000);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+    </section>
+
+    <section id="a11y">
+      <h2>Фрагменты A11y</h2>
+      <p>Проверка alt, ARIA‑меток и видимого фокуса.</p>
+      <iframe class="demo-frame" title="demo" loading="lazy" style="width:100%;height:220px;border:1px solid var(--line,#e5e7eb);border-radius:12px;background:#fff" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&#x27;ru&#x27;&gt;
+&lt;head&gt;
+&lt;meta charset=&#x27;utf-8&#x27;&gt;&lt;meta name=&#x27;viewport&#x27; content=&#x27;width=device-width, initial-scale=1&#x27;&gt;
+&lt;style&gt;
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#fff;padding:16px}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid #e5e7eb;border-radius:9999px;padding:8px 12px}
+  :focus{outline:2px solid #2563eb; outline-offset: 3px}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Доступность: alt, ARIA, фокус&lt;/h3&gt;
+  &lt;div class=&#x27;row&#x27;&gt;
+    &lt;img src=&#x27;data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;64&quot; height=&quot;64&quot;&gt;&lt;rect width=&quot;64&quot; height=&quot;64&quot; fill=&quot;%230055ff&quot;/&gt;&lt;/svg&gt;&#x27; alt=&#x27;Синий квадрат как логотип&#x27;&gt;
+    &lt;button class=&#x27;chip&#x27; aria-label=&#x27;Открыть меню навигации&#x27;&gt;☰ Меню&lt;/button&gt;
+    &lt;a class=&#x27;chip&#x27; href=&#x27;#&#x27;&gt;Ссылка&lt;/a&gt;
+    &lt;input class=&#x27;chip&#x27; placeholder=&#x27;Поиск&#x27; aria-label=&#x27;Поле поиска&#x27;&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;"></iframe>
+    </section>
+
+    <footer class="subtitle">
+      Стили берутся из вашего <code>styles.css</code> для оболочки; каждое демо самодостаточно внутри своего iframe.
+    </footer>
+  </div>
+</body>
+</html>
