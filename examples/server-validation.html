@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Демо — Серверная валидация</title>
+<style>
+  :root{--line:#e5e7eb;--bad:#b91c1c;--good:#16a34a}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;display:grid;place-items:center;min-height:100vh;background:#f8fafc}
+  form{width:min(420px,92vw);background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  label{display:block;margin:.4rem 0 .2rem}
+  input{width:100%;padding:.6rem;border:1px solid var(--line);border-radius:10px}
+  .err{color:var(--bad);font-size:.9rem;margin:.2rem 0 .4rem;display:none}
+  .ok{color:var(--good);font-size:.95rem;display:none;margin-top:.4rem}
+  button{margin-top:.6rem;padding:.6rem 1rem;border-radius:10px;border:1px solid #2563eb;background:#2563eb;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+  <form id="f">
+    <h3>Регистрация (серверная валидация)</h3>
+    <label for="email">E‑mail</label>
+    <input id="email" type="email" required>
+    <div class="err" id="e_email"></div>
+
+    <label for="pwd">Пароль (≥ 8, буквы+цифры)</label>
+    <input id="pwd" type="password" required>
+    <div class="err" id="e_pwd"></div>
+
+    <button>Зарегистрироваться</button>
+    <div class="ok" id="ok">✅ Успех</div>
+  </form>
+<script>
+  // Список занятых email в "БД"
+  const taken = JSON.parse(localStorage.getItem('sv_taken')||'["test@example.com"]');
+  function serverValidate(payload){
+    const errors = {};
+    const email = payload.email?.toLowerCase()||"";
+    if(!email.includes("@")) errors.email = "Неверный формат email";
+    if(taken.includes(email)) errors.email = "Этот e‑mail уже зарегистрирован";
+    const pwd = payload.password||"";
+    if(pwd.length<8 || !(/[a-z]/i.test(pwd) && /\d/.test(pwd))) errors.password = "Пароль слишком простой";
+    return { ok: Object.keys(errors).length===0, errors };
+  }
+  document.getElementById('f').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const payload = { email: document.getElementById('email').value, password: document.getElementById('pwd').value };
+    const {ok, errors} = serverValidate(payload);
+    // показать ошибки
+    const eEmail = document.getElementById('e_email'); const ePwd = document.getElementById('e_pwd');
+    eEmail.style.display = errors.email ? 'block':'none'; eEmail.textContent = errors.email||'';
+    ePwd.style.display = errors.password ? 'block':'none'; ePwd.textContent = errors.password||'';
+    const okEl = document.getElementById('ok'); okEl.style.display='none';
+    if(ok){ 
+      taken.push(payload.email.toLowerCase()); localStorage.setItem('sv_taken', JSON.stringify(taken));
+      okEl.style.display='block'; 
+      e.target.reset();
+    }
+  });
+</script>
+</body>
+</html>

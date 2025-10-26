@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Демо — Optimistic UI</title>
+<style>
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;display:grid;place-items:center;min-height:100vh;background:#fff}
+  .post{width:min(520px,92vw);border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+  .row{display:flex;align-items:center;gap:10px}
+  .btn{padding:.4rem .7rem;border:1px solid #2563eb;border-radius:10px;background:#2563eb;color:#fff;cursor:pointer}
+  .muted{opacity:.75}
+  .err{color:#b91c1c;margin-left:8px;display:none}
+</style>
+</head>
+<body>
+  <div class="post">
+    <h3>Пост: «Нравится»</h3>
+    <div class="row">
+      <button class="btn" id="likeBtn">👍 Нравится</button>
+      <div>Лайков: <b id="count">0</b></div>
+      <div class="muted" id="state"></div>
+      <div class="err" id="err">Ошибка — откат изменений</div>
+    </div>
+  </div>
+<script>
+  let count=0;
+  const countEl = document.getElementById('count');
+  const stateEl = document.getElementById('state');
+  const errEl = document.getElementById('err');
+  document.getElementById('likeBtn').onclick = async ()=>{
+    // optimistic update
+    const prev = count;
+    count++; countEl.textContent = count;
+    stateEl.textContent = 'сохраняем...'; errEl.style.display='none';
+    try {
+      // эмулируем сеть: 30% ошибки
+      await new Promise((res,rej)=>setTimeout(()=>Math.random()<.3?rej(new Error('fail')):res(), 800));
+      stateEl.textContent = 'сохранено ✓';
+      setTimeout(()=>stateEl.textContent='', 700);
+    } catch(e){
+      // rollback
+      count = prev; countEl.textContent = count;
+      stateEl.textContent = ''; errEl.style.display='inline';
+      setTimeout(()=>errEl.style.display='none', 1200);
+    }
+  };
+</script>
+</body>
+</html>

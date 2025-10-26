@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Демо — Пагинация</title>
+<style>
+  :root{--line:#e5e7eb}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#fff}
+  .wrap{max-width:720px;margin:20px auto;padding:0 12px}
+  .list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .item{border:1px solid var(--line);border-radius:12px;padding:12px}
+  .toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:10px 0}
+  button,select{padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  button[disabled]{opacity:.5;cursor:not-allowed}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Пагинация (клиентская)</h2>
+    <div class="toolbar">
+      <div>
+        <button id="prev">← Назад</button>
+        <button id="next">Вперёд →</button>
+      </div>
+      <div>
+        На странице: 
+        <select id="limit">
+          <option>6</option><option selected>9</option><option>12</option>
+        </select>
+        <span id="info"></span>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+<script>
+  // dataset 1..100
+  const data = Array.from({length:100}, (_,i)=>({id:i+1, title:"Элемент #"+(i+1)}));
+  let page=1, limit=9;
+  const list = document.getElementById('list');
+  const info = document.getElementById('info');
+  function render(){
+    const total = Math.ceil(data.length/limit);
+    page = Math.max(1, Math.min(total, page));
+    const start = (page-1)*limit;
+    const items = data.slice(start, start+limit);
+    list.innerHTML = items.map(x=>`<div class="item"><b>${x.title}</b></div>`).join("");
+    info.textContent = `Стр. ${page}/${total}`;
+    document.getElementById('prev').disabled = page<=1;
+    document.getElementById('next').disabled = page>=total;
+  }
+  document.getElementById('prev').onclick=()=>{page--;render();};
+  document.getElementById('next').onclick=()=>{page++;render();};
+  document.getElementById('limit').onchange=(e)=>{limit=+e.target.value;page=1;render();};
+  render();
+</script>
+</body>
+</html>

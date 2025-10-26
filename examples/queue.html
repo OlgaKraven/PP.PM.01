@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Демо — Очередь задач</title>
+<style>
+  :root{--line:#e5e7eb}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#f8fafc}
+  .wrap{max-width:780px;margin:20px auto;padding:0 12px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input,button{padding:.5rem .7rem;border-radius:10px;border:1px solid var(--line)}
+  button{background:#16a34a;color:#fff;border-color:#16a34a;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff}
+  th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}
+  .badge{padding:2px 8px;border-radius:9999px;border:1px solid var(--line);font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2>Очередь задач (worker + статус)</h2>
+  <div class="row">
+    <input id="task" placeholder="Название задачи">
+    <button id="add">Добавить в очередь</button>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>Задача</th><th>Статус</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+<script>
+  let q = []; // очередь
+  const tbody = document.getElementById('tbody');
+  function render(){
+    tbody.innerHTML = q.map((t,i)=>`<tr><td>${i+1}</td><td>${t.name}</td><td><span class="badge">${t.status}</span></td></tr>`).join("");
+  }
+  document.getElementById('add').onclick = ()=>{
+    const name = document.getElementById('task').value.trim();
+    if(!name) return;
+    q.push({name, status:'queued'});
+    document.getElementById('task').value='';
+    render();
+  };
+  // воркер
+  setInterval(()=>{
+    const current = q.find(t=>t.status==='queued');
+    if(current){
+      current.status='processing'; render();
+      const duration = 500 + Math.random()*1200;
+      setTimeout(()=>{ current.status = Math.random()<.15 ? 'failed' : 'done'; render(); }, duration);
+    }
+  }, 800);
+</script>
+</body>
+</html>
